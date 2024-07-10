@@ -3,8 +3,10 @@ package Controller
 import (
 	"BearLibrary/Config"
 	model "BearLibrary/Models"
-	"github.com/labstack/echo/v4"
+	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
 var authors []model.Author
@@ -12,11 +14,11 @@ var authors []model.Author
 func GetAuthors(c echo.Context) error {
 	err := Config.DB.Find(&authors)
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"messages": err.Error,
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"messages": "success",
 		"authors":  authors,
 	})
@@ -28,11 +30,11 @@ func GetAuthorController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err := Config.DB.Find(&author, id).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"messages": "success get author data",
 		"author":   author,
 	})
@@ -46,11 +48,11 @@ func AddAuthor(c echo.Context) error {
 	}
 	err = Config.DB.Save(&author).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success create author",
 		"author":  author,
 	})
