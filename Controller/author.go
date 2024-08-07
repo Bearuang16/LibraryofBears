@@ -4,16 +4,17 @@ import (
 	"BearLibrary/Config"
 	model "BearLibrary/Models"
 	"github.com/labstack/echo/v4"
+	"net/http"
 	"strconv"
 )
 
-var authors []model.Author
-
 func GetAuthors(c echo.Context) error {
-	err := Config.DB.Find(&authors)
+	var authors []model.Author
+	err := Config.DB.Find(&authors).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
-			"messages": err.Error,
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"messages": err,
+			"data":     "test",
 		})
 	}
 	return c.JSON(200, map[string]interface{}{
@@ -22,17 +23,17 @@ func GetAuthors(c echo.Context) error {
 	})
 }
 
-func GetAuthorController(c echo.Context) error {
+func GetAuthor(c echo.Context) error {
 	author := model.Author{}
 	c.Bind(&author)
 	id, _ := strconv.Atoi(c.Param("id"))
 	err := Config.DB.Find(&author, id).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"messages": "success get author data",
 		"author":   author,
 	})
@@ -46,12 +47,28 @@ func AddAuthor(c echo.Context) error {
 	}
 	err = Config.DB.Save(&author).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success create author",
 		"author":  author,
+	})
+}
+
+func UpdateAuthor(c echo.Context) error {
+	author := model.Author{}
+	c.Bind(&author)
+	id, _ := strconv.Atoi(c.Param("id"))
+	err := Config.DB.Model(author).Where("id = ?", id).Updates(author).Error
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": "failed to update",
+			"error":   err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"messages": "success update author",
 	})
 }
