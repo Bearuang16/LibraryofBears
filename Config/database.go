@@ -2,6 +2,7 @@ package Config
 
 import (
 	"BearLibrary/Models"
+	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -9,7 +10,11 @@ import (
 var DB *gorm.DB
 
 func InitConnection() {
-	dsn := "root:@tcp(host.docker.internal:3307)/library_of_bears?charset=utf8mb4&parseTime=True&loc=Local"
+	host := getEnv("DB_HOST", "localhost")
+	user := getEnv("DB_USER", "root")
+	port := getEnv("DB_PORT", "3306")
+	//dsn1 := "root:@tcp(host.docker.internal:3307)/library_of_bears?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, host, port)
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
