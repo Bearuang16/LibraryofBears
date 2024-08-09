@@ -4,21 +4,21 @@ import (
 	"BearLibrary/Config"
 	"BearLibrary/Helper"
 	model "BearLibrary/Models"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
 func GetAuthors(c echo.Context) error {
 	var authors []model.Author
 	err := Config.DB.Find(&authors).Error
 	if err != nil {
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"messages": err,
-			"data":     "test",
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+      "messages": err,
 		})
 	}
-	return c.JSON(200, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"messages": "success",
 		"authors":  authors,
 	})
@@ -30,7 +30,7 @@ func GetAuthor(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err := Config.DB.Find(&author, id).Error
 	if err != nil {
-		return c.JSON(http.StatusOK, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
@@ -54,7 +54,7 @@ func AddAuthor(c echo.Context) error {
 	}
 	err = Config.DB.Save(&author).Error
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
