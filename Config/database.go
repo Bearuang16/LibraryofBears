@@ -8,6 +8,7 @@ import (
 )
 
 var DB *gorm.DB
+var Secret = getEnv("SECRET", "secret")
 
 func InitConnection() {
 	host := getEnv("DB_HOST", "localhost")

@@ -1,6 +1,7 @@
 package Helper
 
 import (
+	"BearLibrary/Config"
 	"github.com/golang-jwt/jwt"
 	"strings"
 	"time"
@@ -12,7 +13,7 @@ func CreateToken(id uint) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	claims["authorization"] = true
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte("secret"))
+	return token.SignedString([]byte(Config.Secret))
 }
 
 func GetClaims(reqToken string) bool {
@@ -22,7 +23,7 @@ func GetClaims(reqToken string) bool {
 	}
 	reqToken = splitToken[1]
 	token, err := jwt.Parse(reqToken, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(Config.Secret), nil
 	})
 	if err != nil {
 		return false
