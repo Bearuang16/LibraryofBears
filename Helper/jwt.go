@@ -7,27 +7,26 @@ import (
 	"time"
 )
 
-func CreateToken(id uint) (string, error) {
+func CreateToken(role uint) (string, error) {
 	claims := jwt.MapClaims{}
-	claims["id"] = id
+	claims["role"] = role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-	claims["authorization"] = true
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(Config.Secret))
 }
 
-func GetClaims(reqToken string) bool {
+func GetClaims(reqToken string) string {
 	splitToken := strings.Split(reqToken, "Bearer ")
 	if len(splitToken) < 1 {
-		return false
+		return ""
 	}
 	reqToken = splitToken[1]
 	token, err := jwt.Parse(reqToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(Config.Secret), nil
 	})
 	if err != nil {
-		return false
+		return ""
 	}
 	claims := token.Claims.(jwt.MapClaims)
-	return claims["authorization"].(bool)
+	return claims["role"].(string)
 }

@@ -18,7 +18,7 @@ func Login(c echo.Context) error {
 			"error": err,
 		})
 	}
-	err = Config.DB.Find(&users).Where("username = ?", users.Username).Error
+	err = Config.DB.Find(&users).Where("email = ?", loginInfo.Email).Error
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": "username not found",
@@ -29,7 +29,7 @@ func Login(c echo.Context) error {
 			"message": "password incorrect",
 		})
 	}
-	token, err := Helper.CreateToken(users.ID)
+	token, err := Helper.CreateToken(users.Role)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error":   err,

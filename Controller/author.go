@@ -42,7 +42,7 @@ func GetAuthor(c echo.Context) error {
 
 func AddAuthor(c echo.Context) error {
 	authCheck := Helper.GetClaims(c.Request().Header.Get("Authorization"))
-	if authCheck != true {
+	if authCheck != "" {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"message": "unauthorized",
 		})
@@ -66,7 +66,7 @@ func AddAuthor(c echo.Context) error {
 
 func UpdateAuthor(c echo.Context) error {
 	authCheck := Helper.GetClaims(c.Request().Header.Get("Authorization"))
-	if authCheck != true {
+	if authCheck != "" {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"message": "unauthorized",
 		})
