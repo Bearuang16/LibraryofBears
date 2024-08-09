@@ -10,11 +10,21 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Logger())
-	e.GET("/authors", Controller.GetAuthors)
-	e.GET("/authors/:id", Controller.GetAuthor)
-	e.POST("/authors", Controller.AddAuthor)
-	e.PUT("/authors/:id", Controller.UpdateAuthor)
 
+	//Authors
+	e.GET("/authors", Controller.GetAuthors, middleware.JWT([]byte("secret")))
+	e.GET("/authors/:id", Controller.GetAuthor)
+	e.POST("/authors", Controller.AddAuthor, middleware.JWT([]byte("secret")))
+	e.PUT("/authors/:id", Controller.UpdateAuthor, middleware.JWT([]byte("secret")))
+
+	//Series
+	e.GET("/series", Controller.GetSeries)
+	e.GET("/series/:id", Controller.GetSeriesByAuthor)
+	e.POST("series", Controller.AddSeries)
+
+	//Users
+	e.POST("/users", Controller.Login)
+	//healthcheck
 	e.GET("/check", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"status": "ok",

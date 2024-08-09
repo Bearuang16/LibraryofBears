@@ -2,6 +2,7 @@ package Controller
 
 import (
 	"BearLibrary/Config"
+	"BearLibrary/Helper"
 	model "BearLibrary/Models"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -40,6 +41,12 @@ func GetAuthor(c echo.Context) error {
 }
 
 func AddAuthor(c echo.Context) error {
+	authCheck := Helper.GetClaims(c.Request().Header.Get("Authorization"))
+	if authCheck != true {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "unauthorized",
+		})
+	}
 	author := model.Author{}
 	err := c.Bind(&author)
 	if err != nil {
@@ -58,6 +65,12 @@ func AddAuthor(c echo.Context) error {
 }
 
 func UpdateAuthor(c echo.Context) error {
+	authCheck := Helper.GetClaims(c.Request().Header.Get("Authorization"))
+	if authCheck != true {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "unauthorized",
+		})
+	}
 	author := model.Author{}
 	c.Bind(&author)
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -72,3 +85,5 @@ func UpdateAuthor(c echo.Context) error {
 		"messages": "success update author",
 	})
 }
+
+//TODO: soft-delete for author
