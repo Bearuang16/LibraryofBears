@@ -14,6 +14,7 @@ type Arts struct {
 	Description string         `json:"description"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   time.Time      `json:"deleted_at"`
 	SeriesID    uint           `json:"series_id"`
 	Author      Author         `json:"author" gorm:"foreignkey:AuthorID;constraint:OnDelete:CASCADE,OnUpdate:Cascade"`
 	Series      Series         `json:"series" gorm:"foreignkey:SeriesID;constraint:OnDelete:CASCADE,OnUpdate:Cascade"`

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"BearLibrary/Config"
+	config "BearLibrary/Config"
 	"BearLibrary/Route"
 )
 
 func main() {
-	Config.InitConnection()
+	config.InitConnection()
 	e := Route.New()
 	e.Logger.Fatal(e.Start(":8000"))
 }
